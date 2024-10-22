@@ -17,6 +17,23 @@
   margin-bottom: 10px;
 }
 
+.name-container {
+  margin-bottom: 20px;
+}
+
+.name-container label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.name-container input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
 .back-button {
   display: inline-block;
   margin-top: 20px;

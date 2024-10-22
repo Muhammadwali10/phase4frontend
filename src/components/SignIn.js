@@ -2,26 +2,54 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Auth.css";
 
-function SignInComponent() {
+function Modal({ message, onClose }) {
+  return (
+    <div className="modal-overlay">
+      <div className="modal-popup">
+        <span className="close" onClick={onClose}>&times;</span>
+        <p>{message}</p>
+      </div>
+    </div>
+  );
+}
+
+function SignInComponent({ fetchNotes }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
-  const handleSignIn = (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
 
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+    try {
+      const response = await fetch("https://phase4backend-1-w06d.onrender.com/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (
-      storedUser &&
-      storedUser.email === email &&
-      storedUser.password === password
-    ) {
-      localStorage.setItem("isAuthenticated", true);
-      navigate("/");
-    } else {
-      setError("Invalid email or password");
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("token", data.token);
+        setSuccess("Logged in successfully!");
+        setError("");
+        setShowModal(true);
+        setTimeout(() => {
+          navigate("/");
+          fetchNotes(); // Call fetchNotes after successful login
+        }, 2000);
+      } else {
+        setError("Invalid email or password");
+        setSuccess("");
+      }
+    } catch (error) {
+      setError("An error occurred. Please try again.");
+      setSuccess("");
     }
   };
 
@@ -52,6 +80,15 @@ function SignInComponent() {
       <p>
         Don't have an account? <Link to="/signup">Sign Up</Link>
       </p>
+      {showModal && (
+        <Modal
+          message={success}
+          onClose={() => {
+            setShowModal(false);
+            setSuccess(""); // Clear success message when closing the modal
+          }}
+        />
+      )}
     </div>
   );
 }

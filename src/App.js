@@ -13,12 +13,32 @@ import ProfileComponent from "./components/Profile";
 import ContentCalendarComponent from "./components/ContentCalendar"; // Import the ContentCalendarComponent
 
 function App() {
+  const fetchNotes = async () => {
+    try {
+      const response = await fetch("https://phase4backend-1-w06d.onrender.com/quicknotes", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Update the state or context with the fetched notes
+        console.log("Fetched notes:", data);
+      } else {
+        console.error("Failed to fetch notes");
+      }
+    } catch (error) {
+      console.error("An error occurred while fetching notes:", error);
+    }
+  };
+
   return (
     <Router>
       <div className="App">
         <Routes>
           <Route path="/" element={<HomeComponent />} />
-          <Route path="/signin" element={<SignInComponent />} />
+          <Route path="/signin" element={<SignInComponent fetchNotes={fetchNotes} />} />
           <Route path="/signup" element={<SignUpComponent />} />
           <Route
             path="/forgot-password"

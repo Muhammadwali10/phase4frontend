@@ -7,6 +7,7 @@ function HomeComponent() {
     localStorage.getItem("profilePicture") ||
       "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
   );
+  const [name, setName] = useState(localStorage.getItem("name") || "User");
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -19,6 +20,10 @@ function HomeComponent() {
     if (storedProfilePicture) {
       setProfilePicture(storedProfilePicture);
     }
+    const storedName = localStorage.getItem("name");
+    if (storedName) {
+      setName(storedName);
+    }
   }, []);
 
   return (
@@ -27,7 +32,7 @@ function HomeComponent() {
       <div className="profile-section">
         <Link to="/profile" className="profile-link">
           <img src={profilePicture} alt="Profile" className="profile-icon" />
-          <div className="profile-text">Profile</div>
+          <div className="profile-text">{name}</div>
         </Link>
       </div>
 

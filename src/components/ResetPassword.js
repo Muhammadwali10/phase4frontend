@@ -1,35 +1,50 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./Auth.css";
 
 function ResetPasswordComponent() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const location = useLocation();
   const navigate = useNavigate();
-  const email = location.state?.email; // Email passed from ForgotPasswordComponent
+
+  // Simulated original password for comparison (you would usually retrieve this from your backend or state)
+  const originalPassword = localStorage.getItem("originalPassword") || "YourOriginalPassword"; // Replace with actual retrieval method
 
   const handleResetPassword = (e) => {
     e.preventDefault();
+    const storedEmail = localStorage.getItem("resetEmail");
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
+    if (!storedEmail) {
+      setError("No email found. Please go back and enter your email.");
       return;
     }
 
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-
-    if (storedUser && storedUser.email === email) {
-      storedUser.password = password;
-      localStorage.setItem("user", JSON.stringify(storedUser));
-      alert(
-        "Password successfully reset! Please sign in with your new password."
-      );
-      navigate("/signin");
-    } else {
-      setError("Something went wrong");
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
     }
+
+    if (password === originalPassword) {
+      setError("New password cannot be the same as the original password.");
+      return;
+    }
+
+    // Simulate password update (e.g., log to console)
+    console.log(`Password for ${storedEmail} reset to ${password}`);
+
+    // Clear stored email
+    localStorage.removeItem("resetEmail");
+
+    // Optionally clear original password or set it to the new password
+    localStorage.setItem("originalPassword", password); // Update with new password for future comparisons
+
+    setMessage("Password updated successfully!");
+    setError("");
+    setTimeout(() => {
+      navigate("/signin"); // Redirect to sign-in page
+    }, 2000);
   };
 
   return (
@@ -40,16 +55,17 @@ function ResetPasswordComponent() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter new password"
+          placeholder="New Password"
           required
         />
         <input
           type="password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          placeholder="Confirm new password"
+          placeholder="Confirm Password"
           required
         />
+        {message && <p className="message">{message}</p>}
         {error && <p className="error">{error}</p>}
         <button type="submit">Reset Password</button>
       </form>

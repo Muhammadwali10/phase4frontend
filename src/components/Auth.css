@@ -33,6 +33,16 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s, transform 0.1s; /* Smooth transition */
+}
+
+.auth-container button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+
+.auth-container button:active {
+  transform: scale(0.95); /* Slightly smaller when pressed */
+  background-color: #3e8e41; /* Even darker green when active */
 }
 
 .auth-container .error {

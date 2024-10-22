@@ -6,6 +6,7 @@ function ProfileComponent() {
   const [profilePicture, setProfilePicture] = useState(
     localStorage.getItem("profilePicture") || ""
   );
+  const [name, setName] = useState(localStorage.getItem("name") || "");
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -22,6 +23,13 @@ function ProfileComponent() {
     }
   };
 
+  const handleNameChange = (e) => {
+    const newName = e.target.value;
+    setName(newName);
+    localStorage.setItem("name", newName);
+    console.log("Name updated:", newName);
+  };
+
   useEffect(() => {
     console.log("Current profile picture:", profilePicture);
   }, [profilePicture]);
@@ -36,6 +44,16 @@ function ProfileComponent() {
           className="profile-picture"
         />
         <input type="file" accept="image/*" onChange={handleImageUpload} />
+      </div>
+      <div className="name-container">
+        <label htmlFor="name">Name:</label>
+        <input
+          type="text"
+          id="name"
+          value={name}
+          onChange={handleNameChange}
+          placeholder="Enter your name"
+        />
       </div>
       <Link to="/" className="back-button">
         Back to Home
